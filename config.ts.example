@@ -1,4 +1,0 @@
-
-export const LOG_PATH = "/opt/minecraft_server/logs/latest.log";
-
-export const WEBHOOK_URL = "";

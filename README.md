@@ -4,6 +4,16 @@ Notify the entry and exit of Minecraft
 
 ## Setup
 
-Copy config.ts.example to config.ts and edit it.
+Set the following environment variables.
 
-Then run `deno run --allow-net --allow-read main.ts`.
+```console
+LOG_PATH=/opt/minecraft_server/logs/latest.log
+WEBHOOK_URL=https://discord.com/api/webhooks/xxxxxxxxxxxxxxxxxxxxxx/slack
+ENABLE_COMMENT_NOTIFICATION=1  # 0: disable, 1: enable
+```
+
+## Run
+
+```console
+deno run --allow-net --allow-read --unstable https://raw.githubusercontent.com/HosokawaR/Minecraft-notify/main/main.ts
+```

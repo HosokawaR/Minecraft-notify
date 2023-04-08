@@ -1,8 +1,16 @@
 import * as tail from "https://deno.land/x/tail@1.1.0/mod.ts";
-import { LOG_PATH, WEBHOOK_URL } from "./config.ts";
+
+const webhookUrl = Deno.env.get("WEBHOOK_URL");
+const logPath = Deno.env.get("LOG_PATH");
+const enableCommentNotification = Boolean(
+  Deno.env.get("ENABLE_COMMENT_NOTIFICATION"),
+);
+
+if (!webhookUrl) throw new Error("WEBHOOK_URL is not set.");
+if (!logPath) throw new Error("LOG_PATH is not set.");
 
 const sendWebhook = async (message: string) => {
-  await fetch(WEBHOOK_URL, {
+  await fetch(webhookUrl, {
     method: "POST",
     body: JSON.stringify({
       text: message,
@@ -14,7 +22,7 @@ let t: tail.Tail | undefined = undefined;
 
 const watch = async () => {
   t?.stop();
-  t = new tail.Tail(LOG_PATH);
+  t = new tail.Tail(logPath);
 
   for await (const line of t.start()) {
     const joinMatched = line.match(/.*?thread\/INFO]: (.*?) joined/);
@@ -22,10 +30,18 @@ const watch = async () => {
       const playerName = joinMatched[1];
       sendWebhook(`${playerName} joined the Minecraft server.`);
     }
+
     const leftMatched = line.match(/.*?thread\/INFO]: (.*?) left/);
     if (leftMatched) {
       const playerName = leftMatched[1];
       sendWebhook(`${playerName} left the Minecraft server.`);
+    }
+
+    const commentMatched = line.match(/.*?thread\/INFO]: <(.*?)> (.*)/);
+    if (enableCommentNotification && commentMatched) {
+      const playerName = commentMatched[1];
+      const comment = commentMatched[2];
+      sendWebhook(`${playerName} 「${comment}」`);
     }
   }
 };
