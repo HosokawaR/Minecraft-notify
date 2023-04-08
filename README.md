@@ -15,5 +15,5 @@ ENABLE_COMMENT_NOTIFICATION=1  # 0: disable, 1: enable
 ## Run
 
 ```console
-deno run --allow-net --allow-read --unstable https://raw.githubusercontent.com/HosokawaR/Minecraft-notify/main/main.ts
+deno run --allow-net --allow-read --allow-env --unstable https://raw.githubusercontent.com/HosokawaR/Minecraft-notify/main/main.ts
 ```
